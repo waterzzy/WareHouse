@@ -1,4 +1,4 @@
-package com.msb.warehouse;
+package com.msb;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
