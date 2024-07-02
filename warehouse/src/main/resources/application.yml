@@ -1,0 +1,27 @@
+file:
+    access-path: /img/upload/
+    upload-path: classpath:static/img/upload
+mybatis:
+    configuration:
+        log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+        map-underscore-to-camel-case: true
+    mapper-locations: classpath:mapper/**/*.xml
+    type-aliases-package: com.pn.entity
+server:
+    port: 9999
+    servlet:
+        context-path: /warehouse
+spring:
+    datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/db_warehouse?serverTimezone=UTC
+        username: root
+        password: 123456
+    data:
+      redis:
+        database: 0
+        host: 127.0.0.1
+        port: 6379
+        password: root
+warehouse:
+    expire-time: 7200
