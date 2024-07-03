@@ -1,4 +1,4 @@
-package com.msb.warehouse;
+package com.msb;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,27 +1,45 @@
 file:
-    access-path: /img/upload/
-    upload-path: classpath:static/img/upload
+  upload-path: classpath:static/img/upload
+  access-path: /img/upload/
+
 mybatis:
-    configuration:
-        log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-        map-underscore-to-camel-case: true
-    mapper-locations: classpath:mapper/**/*.xml
-    type-aliases-package: com.pn.entity
+  mapper-locations: classpath:mappers/*.xml
+  type-aliases-package: com.msb.pojo
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+
+## pageHelper 分⻚
+pagehelper:
+  helper-dialect: mysql
+
 server:
-    port: 9999
-    servlet:
-        context-path: /warehouse
+  port: 8080
+  servlet:
+    context-path: /warehouse
 spring:
-    datasource:
-        driver-class-name: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://localhost:3306/db_warehouse?serverTimezone=UTC
-        username: root
-        password: 123456
-    data:
-      redis:
-        database: 0
-        host: 192.168.145.66
-        port: 6379
-        password: root
-warehouse:
-    expire-time: 7200
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/db_warehouse?serverTimezone=UTC
+    username: root
+    password: 123456
+
+#  data:
+#    redis:
+#      database: 0
+#      host: 192.168.145.66
+#      port: 6379
+#      password: root
+#      expire-time: 7200
+
+  ## 启⽤热部署
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java
+## 设置 dao ⽇志打印级别
+logging:
+  level:
+    com:
+      msb:
+        mapper: debug
