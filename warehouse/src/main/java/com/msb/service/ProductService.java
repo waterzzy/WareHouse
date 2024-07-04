@@ -17,5 +17,6 @@ public interface ProductService {
     Page selectAllProductPage(Page page,Product product);
 
 
-
+    //查询所有的商品    前台导出表格数据
+    List<Product> queryAllProductTableData(Product product);
 }

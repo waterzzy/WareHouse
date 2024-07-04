@@ -46,4 +46,17 @@ public class ProductServiceImpl implements ProductService {
         //返回page对象
         return page;
     }
+
+
+    /**
+     * 查询所有的商品信息   前台数据表格数据导出
+     *
+     * @param product
+     * @return
+     */
+    @Override
+    public List<Product> queryAllProductTableData(Product product) {
+
+        return productMapper.queryAllProductTableData(product);
+    }
 }

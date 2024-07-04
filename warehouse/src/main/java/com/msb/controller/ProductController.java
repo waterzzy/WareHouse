@@ -5,13 +5,17 @@ import com.msb.page.Page;
 import com.msb.pojo.*;
 import com.msb.result.ResultInfo;
 import com.msb.service.*;
+import com.msb.utils.WarehouseConstants;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.ResourceUtils;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -42,6 +46,7 @@ public class ProductController extends BaseController {
 
     @Autowired
     private ProductTypeService productTypeService;
+
 
     /**
      *   查询所有的商品信息----分页
@@ -87,6 +92,7 @@ public class ProductController extends BaseController {
         //带层级关系的-----分类集合  手机parentId=0,typeId=11 他下面有华为手机、苹果手机parentId=11
         List<ProductType> TypeTreeList = productTypeService.allProductTypeTree();
 
+        //响应数据结果
         return success(TypeTreeList);
     }
 
@@ -150,4 +156,74 @@ public class ProductController extends BaseController {
         //响应结果
         return success(unitList);
     }
+
+
+    /**
+     * 查询所有的商品数据--- 前台导出所有商品数据
+     *
+     * @param product
+     * @return
+     */
+    @RequestMapping("/exportTable")
+    public ResultInfo exportTableData(Product product){
+
+        //查询所有的商品   ----  含条件搜索
+        List<Product> productList = productService.queryAllProductTableData(product);
+
+        return success(productList);
+    }
+
+
+
+
+    /**
+     * 将配置文件的file.upload-path属性值注入给控制器的uploadPath属性,
+     * 其为图片上传到项目的目录路径(类路径classes即resources下的static/img/upload);
+     */
+    @Value("${file.upload-path}")
+    private String uploadPath;
+
+    /**
+     * 上传图片的url接口/product/img-upload
+     *
+     * 参数MultipartFile file对象封装了上传的图片;  file 接收前台上传的图片
+     *
+     * @CrossOrigin表示该url接口允许跨域请求;
+     */
+    @CrossOrigin    //跨域支持
+    @PostMapping("/img-upload")
+    public ResultInfo uploadImg(MultipartFile file){
+
+        try {
+            //拿到图片上传到的目录(类路径classes下的static/img/upload)的File对象
+            File uploadDirFile = ResourceUtils.getFile(uploadPath);
+            //拿到图片上传到的目录的磁盘路径
+            String uploadDirPath = uploadDirFile.getAbsolutePath();
+            //拿到图片保存到的磁盘路径
+            String fileUploadPath = uploadDirPath + "\\" + file.getOriginalFilename();
+            //保存图片
+            file.transferTo(new File(fileUploadPath));
+            //成功响应
+            return success("图片上传成功！");
+        } catch (IOException e) {
+            //失败响应
+            return success("图片上传失败！");
+        }
+    }
+
+
+    /**
+     * 添加商品
+     *
+     * @param product
+     * @param token
+     * @return
+     */
+    @RequestMapping("/product-add")
+    public ResultInfo addProduct(@RequestBody Product product,
+                                 @RequestHeader(WarehouseConstants.HEADER_TOKEN_NAME) String token){
+
+        return success();
+    }
+
 }
