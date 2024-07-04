@@ -6,7 +6,7 @@ mybatis:
         log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
         map-underscore-to-camel-case: true
     mapper-locations: classpath:mapper/**/*.xml
-    type-aliases-package: com.pn.entity
+    type-aliases-package: com.msb.entity
 server:
     port: 9999
     servlet:
@@ -20,7 +20,7 @@ spring:
     data:
       redis:
         database: 0
-        host: 127.0.0.1
+        host: 192.168.138.101
         port: 6379
         password: root
 warehouse:
