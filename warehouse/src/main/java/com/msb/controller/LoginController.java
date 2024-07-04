@@ -1,10 +1,8 @@
 package com.msb.controller;
 
 import com.google.code.kaptcha.Producer;
-import com.msb.entity.CurrentUser;
-import com.msb.entity.LoginUser;
-import com.msb.entity.Result;
-import com.msb.entity.User;
+import com.msb.entity.*;
+import com.msb.service.AuthService;
 import com.msb.service.UserService;
 import com.msb.utils.DigestUtil;
 import com.msb.utils.TokenUtils;
@@ -15,12 +13,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.msb.utils.WarehouseConstants.USER_STATE_NOT_PASS;
@@ -40,6 +40,8 @@ private UserService userService;
     private StringRedisTemplate redisTemplate;
     @Autowired
     private TokenUtils tokenUtils;
+    @Autowired
+    private AuthService authService;
     /**
      * 生成验证码
      * @param response
@@ -129,6 +131,54 @@ private UserService userService;
         String token = tokenUtils.loginSign(currentUser, userPwd);
         //将生成的token 相应给客户端
         return  Result.ok("登陆成功",token);
+    }
+
+
+    /**
+     *获取当前登录的用户
+     *      通过解析token 获取当前登录用户
+     * RequestHeader注解的作用得到请求头中的信息
+      * @param token
+     * @return
+     */
+    @RequestMapping("/curr-user")
+    public Result currentUser(@RequestHeader(WarehouseConstants.HEADER_TOKEN_NAME) String token){
+        //解析token ,得到封装了当前登录用户的CurrentUser对象
+        CurrentUser currentUser = tokenUtils.getCurrentUser(token);
+        //响应给前端浏览器
+        return Result.ok(currentUser);
+    }
+
+    /**
+     * 加载权限树
+     *      解析从客户端传过来的token 获得userId
+     *      通过userId查询权限树
+     *      递归
+     * @param token
+     * @return
+     */
+    @RequestMapping("/user/auth-list")
+    public Result loadAuthTree(@RequestHeader(WarehouseConstants.HEADER_TOKEN_NAME) String token){
+        //解析token ,得到封装了当前登录用户的CurrentUser对象
+        CurrentUser currentUser = tokenUtils.getCurrentUser(token);
+        //得戴当前登录的userId
+        int userId = currentUser.getUserId();
+        List<Auth> auths = authService.authTreeByUid(userId);
+        return Result.ok("权限树,加载成功",auths);
+    }
+
+
+    /**
+     * 退出登录
+     *       只需要删除redis 中存在的token
+     * @param token
+     * @return
+     */
+    @RequestMapping("/logout")
+    public Result longOut(@RequestHeader(WarehouseConstants.HEADER_TOKEN_NAME) String token){
+        //从redis 中删除 token 的键
+        redisTemplate.delete(token);
+        return Result.ok("退出系统");
     }
 
 }

@@ -30,4 +30,6 @@ public class User {
 
     private Date updateTime;//修改时间
 
+    private String getCode;//追加的属性--创建人
+
 }
