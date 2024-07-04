@@ -5,8 +5,8 @@ mybatis:
     configuration:
         log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
         map-underscore-to-camel-case: true
-    mapper-locations: classpath:mapper/**/*.xml
-    type-aliases-package: com.pn.entity
+    mapper-locations: classpath:mappers/**/*.xml
+    type-aliases-package: com.msb.pojo
 server:
     port: 9999
     servlet:

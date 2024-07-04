@@ -12,29 +12,24 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class User {
-    private int userId;//用户id
+public class Role {
+    private int roleId;//角色id
 
-    private String userCode;//账号
+    private String roleName;//角色名称
 
-    private String userName;//用户名
+    private String roleDesc;//角色描述
 
-    private String userPwd;//用户密码
+    private String roleCode;//角色标识
 
-    private String userType;//用户类型
+    private String roleState;//角色状态
 
-    private String userState;//用户状态
+    private int createBy;//创建角色的用户id
 
-    private String isDelete;//删除状态
-
-    private int createBy;//创建人
-
-    //返回前端时,自动将Date转换成指定格式的json字符串
+    //json转换的日期格式
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date createTime;//创建时间
 
-    private int updateBy;//修改人
+    private int updateBy;//修改角色的用户id
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date updateTime;//修改时间
-
 }
