@@ -14,4 +14,6 @@ public interface InStoreMapper {
     public int selectInStoreCount(InStore inStore);
     //  分页查询入库单
     public List<InStore> selectInStorePage(@Param("page") Page page,@Param("inStore") InStore inStore);
+    //  根据入库单id 更新入库单状态-改为1已入库
+    public int updateIsInById(Integer insId);
 }

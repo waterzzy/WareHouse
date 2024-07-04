@@ -9,6 +9,9 @@ import lombok.ToString;
 import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ * 入库表单对应实体类
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,9 +22,10 @@ public class InStore {
     private Integer productId;  //  产品ID
     private Integer inNum;      //  入库数量
     private Integer createBy;   //  创建入库单的用户ID
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;    //  创建时间
     private Integer isIn;       //  是否入库 1是，0否
+    /*追加属性*/
     private String productName; //  商品名称
     private String startTime;   //  起始时间
     private String endTime;     //  结束时间

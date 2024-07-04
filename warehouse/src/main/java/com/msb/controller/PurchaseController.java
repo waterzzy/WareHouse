@@ -89,7 +89,7 @@ public class PurchaseController {
     /**
      * 创建入库单
      *
-     * @RequestBody Purchase purchase将请求传递的json数据封装到参数Purchase对象
+     * @RequestBody BuyList buyList将请求传递的json数据封装到参数BuyList对象
      * @RequestHeader(WarehouseConstants.HEADER_TOKEN_NAME) String token
      * 将请求头Token的值即客户端归还的token赋值给参数变量token
      */
@@ -97,7 +97,7 @@ public class PurchaseController {
     public Result createPurchase(@RequestBody BuyList buyList, @RequestHeader(WarehouseConstants.HEADER_TOKEN_NAME) String token) {
         // 获取当前登录用户
         CurrentUser currentUser = tokenUtils.getCurrentUser(token);
-        // 获取当前用户登录ID  也创建入库单的用户ID
+        // 获取当前用户登录ID  也是创建入库单的用户ID
         Integer userId = currentUser.getUserId();
         // 创建入库对象，添加入库单信息
         InStore inStore = new InStore();

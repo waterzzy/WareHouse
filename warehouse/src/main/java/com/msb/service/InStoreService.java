@@ -10,4 +10,5 @@ import java.util.List;
 public interface InStoreService {
     public Result saveInStore(InStore inStore, Integer buyId);
     public Page selectInStorePage(Page page,InStore inStore);
+    public Result inStoreConfirm(InStore inStore);
 }
