@@ -14,7 +14,7 @@ pagehelper:
   helper-dialect: mysql
 
 server:
-  port: 8080
+  port: 9999
   servlet:
     context-path: /warehouse
 spring:
@@ -24,19 +24,22 @@ spring:
     username: root
     password: 123456
 
-#  data:
-#    redis:
-#      database: 0
-#      host: 192.168.145.66
-#      port: 6379
-#      password: root
-#      expire-time: 7200
-
   ## 启⽤热部署
   devtools:
     restart:
       enabled: true
       additional-paths: src/main/java
+
+  data:
+    redis:
+      database: 0
+      host: 192.168.145.66
+      port: 6379
+      password: root
+warehouse:
+  expire-time: 7200
+
+
 ## 设置 dao ⽇志打印级别
 logging:
   level:

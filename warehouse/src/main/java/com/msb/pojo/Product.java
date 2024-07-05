@@ -49,10 +49,10 @@ public class Product {
 
     private Double memPrice;//商品会员价
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createTime;//商品的创建时间
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date updateTime;//商品的修改时间
 
     private Integer createBy;//创建商品的用户id

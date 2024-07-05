@@ -1,10 +1,11 @@
 package com.msb.controller;
 
-import com.msb.base.BaseController;
 import com.msb.page.Page;
 import com.msb.pojo.*;
 import com.msb.result.ResultInfo;
 import com.msb.service.*;
+import com.msb.utils.CurrentUser;
+import com.msb.utils.TokenUtils;
 import com.msb.utils.WarehouseConstants;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ import java.util.List;
 
 @RequestMapping("/product")
 @RestController
-public class ProductController extends BaseController {
+public class ProductController {
     @Autowired
     private ProductService productService;
 
@@ -47,6 +48,9 @@ public class ProductController extends BaseController {
     @Autowired
     private ProductTypeService productTypeService;
 
+    @Autowired
+    private TokenUtils tokenUtils;   //注入tokenUtils对象
+
 
     /**
      *   查询所有的商品信息----分页
@@ -56,12 +60,12 @@ public class ProductController extends BaseController {
      * @return
      */
     @RequestMapping("/product-page-list")
-    public ResultInfo productPageList(Page page,Product product){
+    public Result productPageList(Page page,Product product){
 
         //调用Service层查询所有商品信息的方法
         Page allProductPage = productService.selectAllProductPage(page, product);
 
-        return success(allProductPage);
+        return Result.ok(allProductPage);
     }
 
 
@@ -71,13 +75,13 @@ public class ProductController extends BaseController {
      * @return
      */
     @RequestMapping("/store-list")
-    public ResultInfo storeList(){
+    public Result storeList(){
 
         //调用storeService层的方法
         List<Store> storeList = storeService.queryAllStores();
 
         //返回resultInfo结果对象
-        return success(storeList);
+        return Result.ok(storeList);
     }
 
 
@@ -86,14 +90,14 @@ public class ProductController extends BaseController {
      * @return
      */
     @RequestMapping("/category-tree")
-    public ResultInfo categoryTree(){
+    public Result categoryTree(){
 
         //调用ProductTypeService 层的查商品 分类的 方法
         //带层级关系的-----分类集合  手机parentId=0,typeId=11 他下面有华为手机、苹果手机parentId=11
         List<ProductType> TypeTreeList = productTypeService.allProductTypeTree();
 
         //响应数据结果
-        return success(TypeTreeList);
+        return Result.ok(TypeTreeList);
     }
 
 
@@ -104,13 +108,13 @@ public class ProductController extends BaseController {
      * @return
      */
     @RequestMapping("/brand-list")
-    public ResultInfo brandList(){
+    public Result brandList(){
 
         //调用BrandService层的查询所有品牌的方法
         List<Brand> brandList = brandService.queryAllBrand();
 
         //响应结果
-        return success(brandList);
+        return Result.ok(brandList);
     }
 
 
@@ -119,12 +123,12 @@ public class ProductController extends BaseController {
      * @return
      */
     @RequestMapping("/supply-list")
-    public ResultInfo supplyList(){
+    public Result supplyList(){
         //调用supplyService层的查询所有供应商的方法
         List<Supply> supplyList = supplyService.queryAllSupply();
 
         //响应结果
-        return success(supplyList);
+        return Result.ok(supplyList);
     }
 
 
@@ -133,13 +137,13 @@ public class ProductController extends BaseController {
      * @return
      */
     @RequestMapping("/place-list")
-    public ResultInfo placeList(){
+    public Result placeList(){
 
         //调用placeService层的查询所有产地的方法
         List<Place> placeList = placeService.queryAllPlace();
 
         //响应结果
-        return success(placeList);
+        return Result.ok(placeList);
     }
 
 
@@ -148,29 +152,29 @@ public class ProductController extends BaseController {
      * @return
      */
     @RequestMapping("/unit-list")
-    public ResultInfo unitList(){
+    public Result unitList(){
 
         //调用unitService层的查所有单位的方法
         List<Unit> unitList = unitService.queryAllUnit();
 
         //响应结果
-        return success(unitList);
+        return Result.ok(unitList);
     }
 
 
     /**
-     * 查询所有的商品数据--- 前台导出所有商品数据
+     * 查询所有的商品数据--- 前台导出所有商品数据---Excel
      *
      * @param product
      * @return
      */
     @RequestMapping("/exportTable")
-    public ResultInfo exportTableData(Product product){
+    public Result exportTableData(Product product){
 
         //查询所有的商品   ----  含条件搜索
         List<Product> productList = productService.queryAllProductTableData(product);
 
-        return success(productList);
+        return Result.ok(productList);
     }
 
 
@@ -192,7 +196,7 @@ public class ProductController extends BaseController {
      */
     @CrossOrigin    //跨域支持
     @PostMapping("/img-upload")
-    public ResultInfo uploadImg(MultipartFile file){
+    public Result uploadImg(MultipartFile file){
 
         try {
             //拿到图片上传到的目录(类路径classes下的static/img/upload)的File对象
@@ -204,26 +208,109 @@ public class ProductController extends BaseController {
             //保存图片
             file.transferTo(new File(fileUploadPath));
             //成功响应
-            return success("图片上传成功！");
+            return Result.ok("图片上传成功！");
         } catch (IOException e) {
             //失败响应
-            return success("图片上传失败！");
+            return Result.err(Result.CODE_ERR_BUSINESS,"图片上传失败！");
         }
     }
 
 
     /**
      * 添加商品
-     *
-     * @param product
-     * @param token
+     * @param product   接收前台添加商品表单提交的json数据
+     * @param token   将请求头Token的值即客户端归还的token赋值给参数变量token;
      * @return
      */
     @RequestMapping("/product-add")
-    public ResultInfo addProduct(@RequestBody Product product,
+    public Result addProduct(@RequestBody Product product,
                                  @RequestHeader(WarehouseConstants.HEADER_TOKEN_NAME) String token){
 
-        return success();
+        //获取当前登录的用户
+        CurrentUser currentUser = tokenUtils.getCurrentUser(token);
+        //获取当前登录用户对象的id===商品表中商品的create_by 也就是商品创建人、
+        int createBy = currentUser.getUserId();
+        //设置create_by商品创建人的id
+        product.setCreateBy(createBy);
+
+        //调用productService层的添加商品的方法进行添加
+        Result result = productService.saveProduct(product);
+
+        //响应结果数据
+        return result;
+    }
+
+
+    /**
+     *  修改商品信息
+     *
+     * @param product   修改后表单提交的数据
+     * @param token      客户端归还的token令牌
+     * @return
+     */
+    @RequestMapping("/product-update")
+    public Result updateProduct(@RequestBody Product product,
+                                @RequestHeader(WarehouseConstants.HEADER_TOKEN_NAME) String token){
+        //获取当前登录用户
+        CurrentUser currentUser = tokenUtils.getCurrentUser(token);
+        //拿到当前登录用户的id
+        int updateBy = currentUser.getUserId();
+        product.setUpdateBy(updateBy);
+
+        //执行修改商品的方法
+        Result result = productService.updateProduct(product);
+
+        //响应结果数据
+        return result;
+    }
+
+
+    /**
+     * 删除商品  删除单个商品   根据商品id
+     *
+     * @param productId
+     * @return
+     */
+    @RequestMapping("/product-delete/{productId}")
+    public Result deleteProduct(@PathVariable Integer productId){
+
+        //调用Service层的删除方法
+        Result result = productService.deleteProduct(productId);
+
+        //响应结果
+        return result;
+    }
+
+
+    /**
+     * 批量删除商品 ----  根据前台传来的商品id数组
+     *
+     * @param productIds
+     * @return
+     */
+    @RequestMapping("/product-list-delete")
+    public Result deleteProductList(@RequestBody Integer[] productIds){
+
+        //执行Service层的  批量  删除商品的方法
+        Result result = productService.deleteProductArray(productIds);
+
+        return result;
+    }
+
+
+    /**
+     * 修改商品的  上架 下架 状态
+     * 前台传会传  当前商品的productId, 和要修改的upDownState 上下架状态过来
+     * @return
+     */
+    @RequestMapping("/state-change")
+    public Result changeProductState(@RequestBody Product product){
+
+        //执行Service层的修改上下架的方法
+        Result result = productService.updateProductState(product);
+
+        //响应结果
+        return  result;
     }
 
 }

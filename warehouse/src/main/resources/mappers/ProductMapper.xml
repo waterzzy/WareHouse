@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.msb.mapper.ProductMapper">
 
+  <!--查询所有商品信息  分页  || 条件查询-->
   <select id="selectAllProductPage" parameterType="com.msb.pojo.Product" resultType="com.msb.pojo.Product">
     select t1.*, t2.store_name, t3.brand_name, t4.type_name,
     t5.supply_name, t6.place_name, t7.unit_name from
@@ -39,7 +40,6 @@
     </if>
     order by t1.create_time
   </select>
-
 
   <!--查询所有的前台需要导出的数据表格的数据-->
   <select id="queryAllProductTableData" parameterType="com.msb.pojo.Product" resultType="Product">
@@ -79,4 +79,53 @@
     </if>
     order by t1.create_time
   </select>
+
+  <!--添加商品-->
+  <insert id="insertProduct" parameterType="com.msb.pojo.Product">
+    insert into product values
+      (
+        null, #{storeId}, #{brandId}, #{productName}, #{productNum},
+        #{productInvent}, #{typeId}, #{supplyId}, #{placeId}, #{unitId},
+        #{introduce}, 0, #{inPrice}, #{salePrice}, #{memPrice}, now(),
+        null, #{createBy}, null, #{imgs}, #{productDate}, #{suppDate}
+      )
+  </insert>
+
+  <!--修改商品-->
+  <update id="updateProductById" parameterType="com.msb.pojo.Product">
+    <!--商品上下架状态、创建时间、创建者字段值不用改-->
+    update product set store_id = #{storeId}, brand_id = #{brandId},
+    product_name = #{productName}, product_num = #{productNum},
+    product_invent = #{productInvent}, type_id = #{typeId},
+    supply_id = #{supplyId}, place_id = #{placeId}, unit_id = #{unitId},
+    introduce = #{introduce}, in_price = #{inPrice}, sale_price = #{salePrice},
+    mem_price = #{memPrice}, update_time = now(), update_by = #{updateBy},
+    imgs = #{imgs}, product_date = #{productDate}, supp_date = #{suppDate}
+    where product_id = #{productId}
+  </update>
+
+
+  <!--删除商品根据商品id-->
+  <delete id="deleteProductById" parameterType="java.lang.Integer">
+    delete from product where product_id = #{productId}
+  </delete>
+
+
+  <!--批量删除商品   商品id数组-->
+  <delete id="deleteProductByIdArray">
+    delete from product
+        where product_id
+        in
+          <foreach collection="array" item="productId" open="(" close=")" separator=",">
+            #{productId}
+          </foreach>
+  </delete>
+
+
+  <!--修改商品上下架的状态-->
+  <update id="updateStateById">
+    update product set up_down_state = #{upDownState}
+    where product_id = #{productId}
+  </update>
+
 </mapper>

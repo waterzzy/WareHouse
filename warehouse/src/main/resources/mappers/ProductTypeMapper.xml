@@ -8,5 +8,27 @@
         select * from product_type
     </select>
 
+    <!--根据分类编码查询商品分类-->
+    <select id="findTypeByCode" resultType="ProductType">
+        select * from product_type where type_code = #{typeCode}
+    </select>
 
+    <!--添加商品分类-->
+    <insert id="insertProductType" parameterType="com.msb.pojo.ProductType">
+        insert into product_type values(
+            null, #{parentId}, #{typeCode}, #{typeName}, #{typeDesc}
+        )
+    </insert>
+
+    <!--修改分类 根据分类   id   -->
+    <update id="updateTypeById" parameterType="com.msb.pojo.ProductType">
+        update product_type set
+        type_name = #{typeName}, type_desc = #{typeDesc}
+        where type_id = #{typeId}
+    </update>
+
+    <!--根据分类id删除分类及其所有子级分类的方法-->
+    <delete id="deleteTypeById">
+        delete from product_type where type_id = #{typeId} or parent_id = #{typeId}
+    </delete>
 </mapper>
