@@ -1,0 +1,22 @@
+package com.msb.mapper;
+
+import com.msb.pojo.InStore;
+import com.msb.page.Page;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface InStoreMapper {
+    //  添加入库单的方法
+    public int addInStore(InStore inStore);
+    //  查询入库单总行数
+    public int selectInStoreCount(InStore inStore);
+    //  分页查询入库单
+    public List<InStore> selectInStorePage(@Param("page") Page page, @Param("inStore") InStore inStore);
+    //  根据入库单id 更新入库单状态-改为1已入库
+    public int updateIsInById(Integer insId);
+    //  导出数据表格
+    public List<InStore> exportTable(@Param("inStore") InStore inStore);
+}

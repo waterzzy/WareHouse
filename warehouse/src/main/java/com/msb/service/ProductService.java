@@ -2,7 +2,6 @@ package com.msb.service;
 
 import com.msb.page.Page;
 import com.msb.pojo.Product;
-import com.msb.pojo.ProductType;
 import com.msb.pojo.Result;
 
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.List;
 public interface ProductService {
 
     //查询所有商品信息   分页查询
-    Page selectAllProductPage(Page page,Product product);
+    Page selectAllProductPage(Page page, Product product);
 
 
     //查询所有的商品    前台导出表格数据

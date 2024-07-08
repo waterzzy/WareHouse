@@ -1,10 +1,8 @@
 package com.msb.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.msb.mapper.ProductMapper;
-import com.msb.page.Page;
 import com.msb.pojo.Product;
+import com.msb.page.Page;
 import com.msb.pojo.Result;
 import com.msb.service.ProductService;
 import jakarta.annotation.Resource;
@@ -32,20 +30,19 @@ public class ProductServiceImpl implements ProductService {
      * @return
      */
     @Override
-    public Page selectAllProductPage(Page page,Product product) {
+    public Page selectAllProductPage(Page page, Product product) {
 
-        //开启分页
-        PageHelper.startPage(page.getPageNum(),page.getPageSize());
 
-        //得到对应的分页对象
-        PageInfo<Product> pageInfo=new PageInfo<>(productMapper.selectAllProductPage(product));
+        //查询商品总行数
+        int productCount = productMapper.selectProductCount(product);
 
-        //查到的总记录数
-        page.setTotalNum((int) pageInfo.getTotal());
-        //查到的商品list集合数据
-        page.setResultList(pageInfo.getList());
+        //分页查询商品
+        List<Product> productList = productMapper.selectAllProductPage(page, product);
 
-        //返回page对象
+        //将查询到的总行数和当前页数据组装到Page对象
+        page.setTotalNum(productCount);
+        page.setResultList(productList);
+
         return page;
     }
 

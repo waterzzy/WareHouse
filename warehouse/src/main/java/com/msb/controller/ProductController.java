@@ -2,15 +2,12 @@ package com.msb.controller;
 
 import com.msb.page.Page;
 import com.msb.pojo.*;
-import com.msb.result.ResultInfo;
 import com.msb.service.*;
 import com.msb.utils.CurrentUser;
 import com.msb.utils.TokenUtils;
 import com.msb.utils.WarehouseConstants;
-import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -60,7 +57,7 @@ public class ProductController {
      * @return
      */
     @RequestMapping("/product-page-list")
-    public Result productPageList(Page page,Product product){
+    public Result productPageList(Page page, Product product){
 
         //调用Service层查询所有商品信息的方法
         Page allProductPage = productService.selectAllProductPage(page, product);

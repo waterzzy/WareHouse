@@ -6,6 +6,7 @@ import com.msb.mapper.AuthMapper;
 import com.msb.service.AuthService;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -64,5 +65,17 @@ public class AuthServiceImpl implements AuthService {
             firstAuth.setChildAuth(secondLevelAuthList);
         }
         return firstLevelAuthList;
+    }
+
+    //查询所有权限菜单
+    // 查询方法上标注@Cacheable注释并指定缓存的键
+    @Cacheable(key ="'all:authTree'")
+    @Override
+    public List<Auth> allAuthTree() {
+        //查询所有权限菜单
+        List<Auth> allAuthList = authMapper.selectAllAuth();
+        // 将所有权限菜单List<Auth>转成权限菜单树List<Auth>
+        List<Auth> authTreeList = allAuthToAuthTree(allAuthList,0);
+        return authTreeList;
     }
 }

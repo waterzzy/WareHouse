@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.msb.mapper.RoleMapper">
+
+    <!--//查询所有角色的方法
+    public List<Role> selectAllRole();-->
+
+    <select id="selectAllRole" resultType="role">
+        select * from role where role_state = 1
+    </select>
+
+<!--//根据用户id查询用户分配的所有角色
+    public List<Role> selectRoleByUserId(Integer userId);-->
+
+    <select id="selectRoleByUserId" resultType="role">
+        select t2.*
+        from user_role t1, role t2
+        where t1.role_id = t2.role_id
+        and t2.role_state = 1 and t1.user_id = #{userId}
+    </select>
+
+<!--// 根据角色名查询角色id的方法
+    public Integer selectRoleIdByRoleName(String roleName);-->
+    <select id="selectRoleIdByRoleName" resultType="integer">
+        select role_id from role where role_name = #{roleName}
+    </select>
+
+    <!--// 分页查询角色行数
+    public Integer selectRoleRowCount(Role role);
+    -->
+    <select id="selectRoleRowCount" resultType="integer">
+        select count(*) from role
+        <where>
+            <if test="roleName != null and roleName != ''" >
+                and role_name like concat('%',#{roleName},'%')
+            </if>
+            <if test="roleCode != null and roleCode != ''">
+                and role_code like concat('%',#{roleCode},'%')
+            </if>
+            <if test="roleState != null and roleState != ''">
+                and role_state = #{roleState}
+            </if>
+        </where>
+    </select>
+
+    <!--// 根据角色名称、角色代码、角色状态查询角色并分页
+    public List<Role> selectRolePage(@Param("page") Page page,@Param("role") Role role);
+    -->
+    <select id="selectRolePage" resultType="role">
+        select t1.*
+        from  role t1, user_info t2
+        where t1.create_by = t2.user_id
+        <if test="role.roleName != null and role.roleName != ''" >
+            and t1.role_name like concat('%',#{role.roleName},'%')
+        </if>
+        <if test="role.roleCode != null and role.roleCode != ''">
+            and t1.role_code like concat('%',#{role.roleCode},'%')
+        </if>
+        <if test="role.roleState != null and role.roleState != ''">
+            and t1.role_state = #{role.roleState}
+        </if>
+        limit #{page.limitIndex},#{page.pageSize}
+    </select>
+
+<!--//根据角色名称或角色代码查询角色的方法
+    public Role selectRoleByNameOrCode(String roleName,String roleCode);
+    -->
+    <select id="selectRoleByNameOrCode" resultType="role">
+        select * from role
+        where role_name = #{param1} or role_code = #{param2}
+    </select>
+
+
+
+
+    <!--// 添加角色
+    public Integer insetRole(Role role);
+    -->
+    <insert id="insertRole">
+        insert into role values (
+        null,#{roleName},#{roleDesc},#{roleCode},0,#{createBy},now(),null,null
+        )
+    </insert>
+
+    <!--// 根据角色id启用和禁用角色
+    public Integer setStateByRoleId(Integer roleId,String roleState);
+    -->
+    <update id="setStateByRoleId">
+        update role set role_state = #{param2} where role_id = #{param1}
+    </update>
+
+    <!--// 删除角色
+    public Integer deleteByRoleId(Integer roleId);
+    -->
+    <delete id="deleteByRoleId">
+        delete from role where role_id = #{roleId}
+    </delete>
+
+
+    <!--//根据角色id修改角色描述的方法
+    public int setDescByRoleId(Role role);
+    -->
+    <update id="setDescByRoleId">
+        update role
+        set
+            role_desc = #{roleDesc}, update_by = #{updateBy}, update_time = now()
+        where role_id = #{roleId}
+    </update>
+</mapper>
