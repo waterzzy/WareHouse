@@ -12,4 +12,63 @@
          and t3.auth_state=1 and t3.auth_type!=3
          and t1.user_id=#{userId}
     </select>
+
+    <!--//查询所有权限菜单
+  public List<Auth> selectAllAuth();
+  -->
+    <select id="selectAllAuth" resultType="auth">
+        select * from auth_info where auth_state = 1 and auth_type != 3
+    </select>
+
+    <!--//添加权限
+    public Integer insertAuth();
+    -->
+    <insert id="insertAuth">
+        insert into auth_info values (
+                                         null,#{parentId},#{authName},#{authDesc},#{authGrade},#{authType},#{authUrl},#{authCode},#{authOrder},1,#{createBy},now(),null,null
+                                     )
+    </insert>
+
+    <!--验证-->
+    <select id="selectAuthByName" resultType="auth">
+        select * from auth_info where auth_name = #{authName}
+    </select>
+    <select id="selectAuthByUrl" resultType="auth">
+        select * from auth_info where auth_url = #{authUrl}
+    </select>
+    <select id="selectAuthByCode" resultType="auth">
+        select * from auth_info where auth_code = #{authCode}
+    </select>
+
+    <!--//修改权限
+    public int updateAuth(Auth auth);
+    -->
+    <update id="updateAuth">
+        update auth_info
+        set
+            auth_desc = #{authDesc},auth_name=#{authName}, update_by = #{updateBy}, update_time = now()
+        where auth_id = #{authId}
+    </update>
+
+    <!--启用权限-->
+    <update id="updateAuthStateById1">
+        update auth_info
+        set
+            auth_order = 1
+        where auth_id = #{authId}
+    </update>
+
+    <!--禁用权限-->
+    <update id="updateAuthStateById2">
+        update auth_info
+        set
+            auth_order = 0
+        where auth_id = #{authId}
+    </update>
+
+    <!--删除权限-->
+    <delete id="deleteAuthById">
+        delete from auth_info where auth_id = #{authId}
+    </delete>
+
 </mapper>

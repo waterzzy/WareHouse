@@ -51,6 +51,15 @@ public class RoleController {
         return result;
     }
 
+
+    //导出数据
+    @RequestMapping("/exportTable")
+    public Result exportTable(Page page, Role role){
+        page = roleService.queryRolePage(page,role);
+        return Result.ok(page.getResultList());
+    }
+
+
     //改变角色状态
     @RequestMapping("/role-state-update")
     public Result setRoleState(@RequestBody Role role){

@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
 
         return userMapper.findUserByCode(userCode) ;
     }
-    //分页查询用户的业务方法
+   /* //分页查询用户的业务方法
     @Override
     public Page queryUserPage(Page page, User user) {
 
@@ -47,7 +47,40 @@ public class UserServiceImpl implements UserService {
         page.setResultList(userList);
 
         return page;
+    }*/
+
+
+    //分页查询用户的业务方法
+    @Override
+    public Page queryUserPage(Page page, User user) {
+        if(user.getUserType() == null || user.getUserType() == ""){
+            //查询用户总行数
+            int userCount = userMapper.selectUserCount(user);
+
+            //分页查询用户
+            List<User> userList = userMapper.selectUserPage(page, user);
+
+            //将查询到的总行数和当前页数据组装到Page对象
+            page.setTotalNum(userCount);
+            page.setResultList(userList);
+
+            return page;
+        }else {
+            int userCount = userMapper.selectUserCount(user);
+//分页查询用户
+            List<User> userList = userMapper.selectUserPage2(page, user);
+
+//将查询到的总行数和当前页数据组装到Page对象
+            page.setTotalNum(userCount);
+            page.setResultList(userList);
+
+            return page;
+
+        }
+
+
     }
+
 
     //添加用户业务实现
     @Override

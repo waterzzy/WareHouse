@@ -53,6 +53,13 @@ public class UserController {
         return result;
     }
 
+    //导出数据
+    @RequestMapping("/exportTable")
+    public Result exportTable(Page page,User user){
+        page = userService.queryUserPage(page,user);
+        return Result.ok(page.getResultList());
+    }
+
     // 启用或禁用用户的url接口 user/updateState
     @RequestMapping("/updateState")
     public Result updateState(@RequestBody User user){

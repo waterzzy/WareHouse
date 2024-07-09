@@ -13,4 +13,21 @@ public interface AuthMapper {
 
     //添加权限
     public int insertAuth(Auth auth);
+    //验证name,url,code
+    public Auth selectAuthByName(String authName);
+    public Auth selectAuthByUrl(String authUrl);
+    public Auth selectAuthByCode(String authCode);
+
+
+    //修改权限
+    public int updateAuth(Auth auth);
+
+    //启用权限
+    public int updateAuthStateById1(Integer authId);
+
+    //禁用权限
+    public int updateAuthStateById2(Integer authId);
+
+    //删除权限
+    public int deleteAuthById(Integer authId);
 }

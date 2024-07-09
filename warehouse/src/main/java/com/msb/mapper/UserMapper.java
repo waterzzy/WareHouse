@@ -30,4 +30,6 @@ public interface UserMapper {
 
     // 根据用户id重置密码
     public int setPwdByUserId(Integer userId,String password);
+
+    public List<User> selectUserPage2(@Param("page") Page page,@Param("user") User user);
 }

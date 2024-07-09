@@ -177,4 +177,14 @@
     where product_id = #{productId}
   </update>
 
+  <!--根据商品ID增加/减少商品库存-->
+  <update id="addInventById">
+    update product set product_invent = product_invent + #{invent} where product_id = #{productId}
+  </update>
+
+  <!--根据商品ID查询商品库存-->
+  <select id="queryProductById" resultType="com.msb.pojo.Product">
+    select * from product where product_id = #{productId}
+  </select>
+
 </mapper>

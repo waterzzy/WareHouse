@@ -3,9 +3,11 @@ package com.msb.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.msb.pojo.Auth;
 import com.msb.mapper.AuthMapper;
+import com.msb.pojo.Result;
 import com.msb.service.AuthService;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -78,4 +80,76 @@ public class AuthServiceImpl implements AuthService {
         List<Auth> authTreeList = allAuthToAuthTree(allAuthList,0);
         return authTreeList;
     }
+
+
+    // 添加权限
+    @CacheEvict(key = "'all:authTree'")
+    @Override
+    public Result addAuth(Auth auth) {
+        int i = authMapper.insertAuth(auth);
+        if(i > 0){
+            return Result.ok("权限添加成功");
+        }
+        return Result.err(Result.CODE_ERR_BUSINESS,"权限添加失败");
+    }
+
+    @Override
+    public Auth queryAuthByName(String authName) {
+        return authMapper.selectAuthByName(authName);
+    }
+    @Override
+    public Auth queryAuthByUrl(String authUrl) {
+        return authMapper.selectAuthByUrl(authUrl);
+    }
+    @Override
+    public Auth queryAuthByCode(String authCode) {
+        return authMapper.selectAuthByCode(authCode);
+    }
+
+    //修改权限名称和描述
+    //    public Result updateAuth(Auth auth);
+    @CacheEvict(key = "'all:authTree'")
+    @Override
+    public Result updateAuth(Auth auth) {
+        int i = authMapper.updateAuth(auth);
+        if(i > 0){
+            return Result.ok("权限修改成功");
+        }
+        return Result.err(Result.CODE_ERR_BUSINESS,"修改失败");
+    }
+
+    //启用权限
+    @CacheEvict(key = "'all:authTree'")
+    @Override
+    public Result setAuthState1(Integer authId) {
+        int i = authMapper.updateAuthStateById1(authId);
+        if(i > 0){
+            return Result.ok("权限启用成功");
+        }
+
+        return Result.err(Result.CODE_ERR_BUSINESS,"启用权限失败");
+    }
+
+    //禁用权限
+    @CacheEvict(key = "'all:authTree'")
+    @Override
+    public Result setAuthState2(Integer authId) {
+        int i = authMapper.updateAuthStateById2(authId);
+        if(i > 0){
+            return Result.ok("权限禁用成功");
+        }
+        return Result.err(Result.CODE_ERR_BUSINESS,"禁用权限失败");
+    }
+
+    //删除权限
+    @CacheEvict(key = "'all:authTree'")
+    @Override
+    public Result deleteAuthById(Integer authId) {
+        int i =authMapper.deleteAuthById(authId);
+        if(i>0){
+            return Result.ok("权限删除成功");
+        }
+        return Result.err(Result.CODE_ERR_BUSINESS,"删除权限失败");
+    }
+
 }
